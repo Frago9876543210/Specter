@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Frago9876543210\Specter;
 
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\server\NetworkInterfaceRegisterEvent;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
@@ -53,10 +52,9 @@ class Specter extends PluginBase implements Listener{
 		$session->onLoginSuccess();
 		$session->setPlayerInfo($playerInfo);
 
-		$ev = new PlayerCreationEvent($session);
-		$ev->call();
-		$class = $ev->getPlayerClass();
+		$session->onResourcePacksDone();
+		$session->onSpawn();
 
-		return new $class($server, $session, $playerInfo, true); //allows plugins to replace it
+		return $session->getPlayer();
 	}
 }
