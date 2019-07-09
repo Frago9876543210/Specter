@@ -53,8 +53,11 @@ class Specter extends PluginBase implements Listener{
 		$session->setPlayerInfo($playerInfo);
 
 		$session->onResourcePacksDone();
+		$player = $session->getPlayer();
+		$player->setViewDistance(32);
+
 		$session->onSpawn();
 
-		return $session->getPlayer();
+		return $player;
 	}
 }
