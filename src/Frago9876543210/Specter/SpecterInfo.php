@@ -18,7 +18,7 @@ class SpecterInfo extends PlayerInfo{
 			$skin ?? new Skin("Standard_Custom", str_repeat("\x80", 8192)),
 			$locale ?? "en_US",
 			$xuid ?? "",
-			$clientId ?? 0
+			[]
 		);
 	}
 }

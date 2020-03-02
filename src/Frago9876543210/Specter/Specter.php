@@ -27,7 +27,7 @@ class Specter extends PluginBase implements Listener{
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 
-	public static function getInstance() : Specter{
+	public static function getInstance() : self{
 		return self::$instance;
 	}
 
