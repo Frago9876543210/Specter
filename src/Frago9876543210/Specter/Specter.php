@@ -6,7 +6,9 @@ namespace Frago9876543210\Specter;
 
 use pocketmine\event\Listener;
 use pocketmine\event\server\NetworkInterfaceRegisterEvent;
+use pocketmine\network\mcpe\compression\ZlibCompressor;
 use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\PacketPool;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\network\mcpe\raklib\RakLibPacketSender;
 use pocketmine\player\Player;
@@ -38,6 +40,10 @@ class Specter extends PluginBase implements Listener{
 		}
 	}
 
+	/**
+	 * @noinspection PhpUndefinedMethodInspection
+	 * @noinspection PhpUndefinedFieldInspection
+	 */
 	public function createPlayer(PlayerInfo $playerInfo) : Player{
 		if($this->interface === null){
 			throw new UnexpectedValueException("RakLibInterface not found!");
@@ -48,16 +54,29 @@ class Specter extends PluginBase implements Listener{
 		$sessionId = 0x7fffffff + ++$this->offset;
 
 		//Session is not created directly (This means that packets will not arrive at the specified address)
-		$session = new NetworkSession($server, $sessionManager, new RakLibPacketSender($sessionId, $this->interface), "specter", 0x7fff + $this->offset);
-		$session->onLoginSuccess();
-		$session->setPlayerInfo($playerInfo);
+		$session = new NetworkSession(
+			$server,
+			$sessionManager,
+			PacketPool::getInstance(),
+			new RakLibPacketSender($sessionId, $this->interface),
+			ZlibCompressor::getInstance(),
+			"specter",
+			0x7fff + $this->offset
+		);
 
-		$session->onResourcePacksDone();
-		$player = $session->getPlayer();
-		$player->setViewDistance(32);
+		$hackFn = function() use ($playerInfo) : Player{
+			$this->onLoginSuccess();
+			$this->info = $playerInfo;
 
-		$session->onSpawn();
+			$this->onResourcePacksDone();
+			$player = $this->getPlayer();
+			$player->setViewDistance(32);
 
-		return $player;
+			$this->onSpawn();
+
+			return $player;
+		};
+
+		return $hackFn->call($session);
 	}
 }

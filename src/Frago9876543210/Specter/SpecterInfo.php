@@ -6,7 +6,7 @@ namespace Frago9876543210\Specter;
 
 use pocketmine\entity\Skin;
 use pocketmine\player\PlayerInfo;
-use pocketmine\utils\UUID;
+use pocketmine\uuid\UUID;
 use function str_repeat;
 
 class SpecterInfo extends PlayerInfo{
